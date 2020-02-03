@@ -1,13 +1,12 @@
 import cv2
 import imutils, math
-import consts as consts
+import consts
 import numpy as np
 
 LOWER_GREEN = np.array([60, 30, 30])
 UPPER_GREEN = np.array([80, 255, 255])
 
 ACTUAL_TARGET_AREA = 33.6 * 10.1
-FOCAL_LENGTH = 678.5
 
 TARGET_NOT_FOUND = 'Target not found'
 TARGET_FOUND = 'Distance to target {} cm'
@@ -17,13 +16,14 @@ MIDDLE_LINE = [(320, 480), (320, 0)]
 
 
 class Camera:
-    def __init__(self, port, fov):
+    def __init__(self, port, fov, focal_length):
         """
         :param port: the camera port for the cap read
         :param fov: the field of view
         """
         self.port = port
         self.fov = fov
+        self.focal_length = focal_length
         self.cap = cv2.VideoCapture(port)
         self.cap.set(cv2.CAP_PROP_EXPOSURE, -13)
 
@@ -47,7 +47,7 @@ class Camera:
                     # in case we got some noise - limit the area to be greater than 100
                     text = 'Target not found'
                 else:
-                    distance = FOCAL_LENGTH * (ACTUAL_TARGET_AREA / cv2.contourArea(target)) ** 0.5
+                    distance = self.focal_length * (ACTUAL_TARGET_AREA / cv2.contourArea(target)) ** 0.5
                     displacement = self.get_displacement(distance)
                     self.draw_contours(frame, target)
                     self.draw_center(frame, target)
@@ -108,7 +108,7 @@ class Camera:
         cy = np.int(m['m01'] / m['m00'])
         return cx, cy
     
-   def get_displacement(self, distance):
+    def get_displacement(self, distance):
         # TODO FIX THE CONST- UNITS -------------------------------------------------------------------------------ASAP
         # finds the distance vector from the robot to the target
         height_diff = consts.CAMERA_HEIGHT - consts.TARGET_HEIGHT_CENTER
@@ -121,5 +121,11 @@ class Camera:
 
 
 if __name__ == '__main__':
-    cam = Camera(1, 60.0)  # port 0 and fov is 60.0
-    cam.camera_feed()
+    cam = Camera(1, # camera port
+                 consts.LIFECAM_FOV,
+                 consts.LIFECAM_FOCAL_LENGTH)
+    try:
+        cam.camera_feed()
+    except Exception as e:
+        cam.die()
+        raise e

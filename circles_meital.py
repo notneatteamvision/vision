@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import cellsLocator
+import visionMath
 import consts
 
 yellow = [np.array([19, 70, 20]), np.array([40, 255, 255])]
@@ -56,7 +56,7 @@ while True:
         drawCircles(display, circles)
         # find the cell's relative location
         for circle in circles:
-            cell_location = cellsLocator.locateCell(circle)
+            cell_location = visionMath.locateCell(circle)
             # print(cell_location)
             text = f"{cell_location[0]*100:.1f} cm  {cell_location[1]:.1f} deg"
             cv2.putText(display, text, (circle[0], circle[1]), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
