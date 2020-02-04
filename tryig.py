@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import visionMath
 import consts
-import colorsys
 
 yellow = [np.array([19, 70, 20]), np.array([40, 255, 255])]
 
@@ -20,9 +19,8 @@ def checkCircle(image, circle, crange=yellow):
         (cx, cy), (cx + hr, cy), (cx - hr, cy), (cx, cy + hr),
         (cx, cy - hr))  # [center, righter, lefter, higher, lower]
     avgColor = np.mean(np.array([image[y, x] for (x, y) in pixels]))
-    print(avgColor)
     # lower = np.greater_equal(crange[0])
-    # print(f"height {consts.VIDEO_HEIGHT} object height: {cy}")
+    print(f"height {consts.VIDEO_HEIGHT} object height: {cy}")
 
 
 def drawCircles(image, circles):
@@ -35,7 +33,10 @@ def drawCircles(image, circles):
         # draw the center of the circle
         cv2.circle(image, (i[0], i[1]), 2, (0, 0, 255), 3)
 
-
+frameCounter = 0
+disSum = 0
+avgDis = 0
+cl = [0,0]
 while True:
     ret, frame = cap.read()
     assert ret  # TODO REMOVE THIS AAAAA
@@ -59,12 +60,19 @@ while True:
         # find the cell's relative location
         for circle in circles:
             cell_location = visionMath.locateCell(circle)
+            cl = cell_location
             # print(cell_location)
-            text = f"{cell_location[0]*100:.1f} cm  {cell_location[1]:.1f} deg"
+            text = f"{avgDis} cm  {cell_location[1]:.1f} deg"
             cv2.putText(display, text, (circle[0], circle[1]), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
     cv2.imshow('Display', display)
-
+    disSum +=cl[0]*100
+    if frameCounter == 9 :
+        frameCounter = 0
+        avgDis = round(disSum/10,2)
+        disSum = 0
+    else:
+        frameCounter += 1
     key = cv2.waitKey(1 if running else 0)
     if key & 0xff == ord('q'):
         break
