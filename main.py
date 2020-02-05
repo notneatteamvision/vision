@@ -116,13 +116,13 @@ class Camera:
         return displaced_distance
 
     def get_angle(self, cx):
-        angle = (1 - 2 * cx / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV / 2
+        angle = (1 - 2 * cx / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2
         return angle
 
 
 if __name__ == '__main__':
-    cam = Camera(1, # camera port
-                 consts.LIFECAM_FOV,
+    cam = Camera(1,  # camera port
+                 consts.LIFECAM_FOV_HORIZONTAL,
                  consts.LIFECAM_FOCAL_LENGTH)
     try:
         cam.camera_feed()
