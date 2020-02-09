@@ -13,14 +13,15 @@ def findCircles(frame):
     edges = cv2.Canny(morph, 10, 200, 3)
     bedges = cv2.GaussianBlur(edges, (7, 7), 0)
 
-    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, maxRadius=200)
+    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, maxRadius=100)
     if (isinstance(circles, np.ndarray) and len(circles)) or circles != None:
-        return (np.uint16(np.around(circles))[0], mask)
-    return ([], mask)
+        return np.uint16(np.around(circles))[0]
+    return []
 
 def drawCircles(frame, circles):
     for circle in circles:
         # draw the outer circle
+        print(circle)
         cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 255, 0), 2)
         # draw the center of the circle
         cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3)
