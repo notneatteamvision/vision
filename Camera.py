@@ -10,8 +10,6 @@ class Camera:
 
         self.cap = cv2.VideoCapture(self.port)
         self.cap.set(cv2.CAP_PROP_EXPOSURE, self.exposure)
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, consts.VIDEO_WIDTH)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, consts.VIDEO_HEIGHT)
 
     def read(self):
         assert(self.cap.isOpened(), "can't read from closed camera")

@@ -2,14 +2,12 @@ import consts
 import math
 import numpy as np
 
-clamp = lambda x: 1 if x > 1 else -1 if x < -1 else x
-
 pi = math.pi
 
 angleAbs = lambda x: (x + pi) % (pi*2) - pi
 
 def getHotizontalAngle(X: int) -> float:
-    return math.radians((1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2)
+    return (1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2
 
 def locateCell(circle: np.array) -> tuple:
     """
@@ -30,13 +28,13 @@ def locateCell(circle: np.array) -> tuple:
 
 
 def triangulatePoint(Xl: int, Xr: int) -> tuple:
+    l = consts.CAMERA_DISTANCE
+    Bl, Br = getHotizontalAngle(Xl), getHotizontalAngle(Xr)
+    Dl = l * math.cos(Br) / math.sin(Bl - Br)
+    x = math.sqrt((l/2)**2 + Dl**2 - l*Dl*math.cos(pi/2-Bl))
     try:
-        l = consts.CAMERA_DISTANCE
-        Bl, Br = getHotizontalAngle(Xl), getHotizontalAngle(Xr)
-        Dl = l * math.cos(Br) / math.sin(Bl - Br)
-        x = math.sqrt((l/2)**2 + Dl**2 - l*Dl*math.cos(pi/2-Bl))
-        a = angleAbs(math.asin(clamp(math.cos(Bl)*Dl/x))-pi/2)
+        a = angleAbs(math.asin(math.sin(pi/2-Bl)*Dl/x)-pi/2)
         return x, a
-    except Exception as e:
+    except ValueError as e:
         print((Xl, Xr))
         raise e
