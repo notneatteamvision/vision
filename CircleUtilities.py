@@ -7,7 +7,9 @@ import consts
 def houghCircles_fix(frame, min_radius, max_radius, limit, **kwargs):
     step = kwargs.get('step', 5)
     circles = []
+    size = max_radius
     
+
 
 def find_circles(frame):
     blurred = cv2.GaussianBlur(frame, (7, 7), 0)
@@ -19,7 +21,7 @@ def find_circles(frame):
     edges = cv2.Canny(morph, 10, 200, 3)
     bedges = cv2.GaussianBlur(edges, (7, 7), 0)
 
-    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, maxRadius=200)
+    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, minRadius=10, maxRadius=200)
 
     if (isinstance(circles, np.ndarray) and len(circles)) or circles != None:
         return list(map(list, np.uint16(np.around(circles))[0])), mask
@@ -33,10 +35,11 @@ def draw_circle(frame, circle, biggest=False):
     cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3) # inner
 
 def draw_circles(frame, circles):
-    biggest = max_circle(circles) if len(circles) else None
+    if len(circles) == 0: return
+    biggest = max_circle(circles)
     for circle in circles:
         if circle == biggest:
             continue
         draw_circle(frame, circle)
-    if biggest: draw_circle(frame, biggest, True)
+    draw_circle(frame, biggest, True)
 

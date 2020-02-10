@@ -30,13 +30,15 @@ def locateCell(circle: np.array) -> tuple:
 
 
 def triangulatePoint(Xl: int, Xr: int) -> tuple:
+    if Xl <= Xr:
+        return False, None
     try:
         l = consts.CAMERA_DISTANCE
         Bl, Br = getHotizontalAngle(Xl), getHotizontalAngle(Xr)
         Dl = l * math.cos(Br) / math.sin(Bl - Br)
         x = math.sqrt((l/2)**2 + Dl**2 - l*Dl*math.cos(pi/2-Bl))
         a = angleAbs(math.asin(clamp(math.cos(Bl)*Dl/x))-pi/2)
-        return x, a
+        return True, (x, a)
     except Exception as e:
         print((Xl, Xr))
-        raise e
+        raise e # TODO REMOVE THIS AAAAAAAA

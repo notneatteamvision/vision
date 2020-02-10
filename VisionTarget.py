@@ -1,4 +1,4 @@
 import visionMath, math
 
-x, a = visionMath.triangulatePoint(457, 183)
+x, a = visionMath.triangulatePoint(157, 157)
 print(x,a)
