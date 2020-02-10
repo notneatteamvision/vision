@@ -4,9 +4,10 @@ import math
 
 import consts
 
-def houghCircles_fix(frame, minRadius, maxRadius, limit, **kwargs):
+def houghCircles_fix(frame, min_radius, max_radius, limit, **kwargs):
     step = kwargs.get('step', 5)
     circles = []
+    
 
 def find_circles(frame):
     blurred = cv2.GaussianBlur(frame, (7, 7), 0)

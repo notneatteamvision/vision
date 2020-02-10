@@ -1,7 +1,7 @@
 import numpy as np
 
 VIDEO_WIDTH = 640
-#VIDEO_WIDTH = 1280
+#VIDEO_WIDTH = 1280 increases the quality but lowers the speed
 VIDEO_HEIGHT = 480
 #VIDEO_HEIGHT = 720
 
