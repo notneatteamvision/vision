@@ -7,8 +7,9 @@ import consts
 def houghCircles_fix(frame, min_radius, max_radius, limit, **kwargs):
     step = kwargs.get('step', 5)
     circles = []
-    size = max_radius
-    
+    moving_max = max_radius
+    while moving_max >= min_radius:
+
 
 
 def find_circles(frame):
