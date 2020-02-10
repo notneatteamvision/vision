@@ -25,7 +25,7 @@ def houghCircles_fix(edges, **kwargs):
         moving_circles = houghCircles_format(
             cv2.HoughCircles(edges, *hough_settings, minRadius=moving_min, maxRadius=moving_max))
 
-        print(f"{moving_max}:{moving_min} -> {len(moving_circles)} found")
+       # print(f"{moving_max}:{moving_min} -> {len(moving_circles)} found")
 
         # add the circles found to the circles array
         if len(moving_circles) == 0:
