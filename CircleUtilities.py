@@ -25,3 +25,7 @@ def drawCircles(frame, circles):
         cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 255, 0), 2)
         # draw the center of the circle
         cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3)
+
+
+def test():
+    print("")
