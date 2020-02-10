@@ -5,18 +5,7 @@ import visionMath
 from Camera import Camera
 import CircleUtilities as Cutils
 
-
-
-PORT_LEFT = 0
-PORT_RIGHT = 1
-
-cam_left = Camera(PORT_LEFT, exposure=-6)
-cam_right = Camera(PORT_RIGHT, exposure=-6)
-
-def do_vision()
-
-while True:
-    frame_left, frame_right = cam_left.read(), cam_right.read()
+def do_vision(frame_left, frame_right):
     circles_left, mask_left = Cutils.find_circles(frame_left)
     circles_right, mask_right = Cutils.find_circles(frame_right)
     Cutils.find_circles(frame_right)
@@ -32,6 +21,17 @@ while True:
     cv2.imshow('ROGHT', frame_right)
     cv2.imshow('LOFT MASK', mask_left)
     cv2.imshow('ROGHT MASK', mask_right)
+
+
+PORT_LEFT = 0
+PORT_RIGHT = 1
+
+cam_left = Camera(PORT_LEFT, exposure=-6)
+cam_right = Camera(PORT_RIGHT, exposure=-6)
+
+while True:
+    frame_left, frame_right = cam_left.read(), cam_right.read()
+    do_vision(frame_left, frame_right)
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
 

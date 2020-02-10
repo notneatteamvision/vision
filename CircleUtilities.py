@@ -4,12 +4,41 @@ import math
 
 import consts
 
-def houghCircles_fix(frame, min_radius, max_radius, limit, **kwargs):
-    step = kwargs.get('step', 5)
-    circles = []
-    moving_max = max_radius
-    while moving_max >= min_radius:
+houghCircles_notempty = lambda c: ((isinstance(c, np.ndarray) and len(c)) or c != None)
+houghCircles_format = lambda c: list(map(list, np.uint16(np.around(c))[0])) if houghCircles_notempty(c) else []
 
+def houghCircles_fix(edges, **kwargs):
+    '''
+
+    '''
+
+    # get kwargs
+    min_radius:int = kwargs.get('min_radius', 100)
+    max_radius:int = kwargs.get('max_radius', 200)
+    limit:int = kwargs.get('limit', 1)
+    step:int = kwargs.get('step', 5)
+    hough_settings:tuple = kwargs.get('hough_settings', (cv2.HOUGH_GRADIENT, 2, 100))
+
+    circles = []
+    for moving_max in range(max_radius, min_radius-1, -step):
+        moving_min = max([moving_max - step + 1, min_radius])
+        moving_circles = houghCircles_format(
+            cv2.HoughCircles(edges, *hough_settings, minRadius=moving_min, maxRadius=moving_max))
+
+        print(f"{moving_max}:{moving_min} -> {len(moving_circles)} found")
+
+        # add the circles found to the circles array
+        if len(moving_circles) == 0:
+            continue
+        elif len(moving_circles) == 1:
+            circles.append(moving_circles[0])
+        else:
+            circles.extend(sorted(moving_circles, key=lambda c: c[2], reverse=True))
+
+        # return if reached circle limit
+        if len(circles) >= limit:
+            return circles[0:limit]
+    return circles
 
 
 def find_circles(frame):
@@ -22,11 +51,9 @@ def find_circles(frame):
     edges = cv2.Canny(morph, 10, 200, 3)
     bedges = cv2.GaussianBlur(edges, (7, 7), 0)
 
-    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, minRadius=10, maxRadius=200)
+    circles = houghCircles_fix(bedges, min_radius=30, max_radius=200, step=30)
 
-    if (isinstance(circles, np.ndarray) and len(circles)) or circles != None:
-        return list(map(list, np.uint16(np.around(circles))[0])), mask
-    return [], mask
+    return circles, mask
 
 def max_circle(circles):
     return max(circles, key=lambda circle: circle[2])

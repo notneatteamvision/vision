@@ -6,7 +6,7 @@ clamp = lambda x: 1 if x > 1 else -1 if x < -1 else x
 
 pi = math.pi
 
-angleAbs = lambda x: (x + pi) % (pi*2) - pi
+angleAbs = lambda x: (x + pi) % (pi*2)
 
 def getHotizontalAngle(X: int) -> float:
     return math.radians((1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2)
