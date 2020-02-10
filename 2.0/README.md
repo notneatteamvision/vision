@@ -1,2 +1,0 @@
-# Vision
-No guy

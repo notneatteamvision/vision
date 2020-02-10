@@ -1,9 +1,14 @@
 import cv2
 import numpy as np
+import math
 
 import consts
 
-def findCircles(frame):
+def houghCircles_fix(frame, minRadius, maxRadius, limit, **kwargs):
+    step = kwargs.get('step', 5)
+    circles = []
+
+def find_circles(frame):
     blurred = cv2.GaussianBlur(frame, (7, 7), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -13,19 +18,24 @@ def findCircles(frame):
     edges = cv2.Canny(morph, 10, 200, 3)
     bedges = cv2.GaussianBlur(edges, (7, 7), 0)
 
-    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, maxRadius=100)
+    circles = cv2.HoughCircles(bedges, cv2.HOUGH_GRADIENT, 2, 100, maxRadius=200)
+
     if (isinstance(circles, np.ndarray) and len(circles)) or circles != None:
-        return np.uint16(np.around(circles))[0]
-    return []
+        return list(map(list, np.uint16(np.around(circles))[0])), mask
+    return [], mask
 
-def drawCircles(frame, circles):
+def max_circle(circles):
+    return max(circles, key=lambda circle: circle[2])
+
+def draw_circle(frame, circle, biggest=False):
+    cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 0, 255) if biggest else (0, 255, 0), 2) # outer
+    cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3) # inner
+
+def draw_circles(frame, circles):
+    biggest = max_circle(circles) if len(circles) else None
     for circle in circles:
-        # draw the outer circle
-        print(circle)
-        cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 255, 0), 2)
-        # draw the center of the circle
-        cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3)
+        if circle == biggest:
+            continue
+        draw_circle(frame, circle)
+    if biggest: draw_circle(frame, biggest, True)
 
-
-def test():
-    print("")
