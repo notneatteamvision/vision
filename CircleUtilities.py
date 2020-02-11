@@ -7,25 +7,22 @@ import consts
 houghCircles_notempty = lambda c: ((isinstance(c, np.ndarray) and len(c)) or c != None)
 houghCircles_format = lambda c: list(map(list, np.uint16(np.around(c))[0])) if houghCircles_notempty(c) else []
 
+
 def houghCircles_fix(edges, **kwargs):
-    '''
-
-    '''
-
     # get kwargs
-    min_radius:int = kwargs.get('min_radius', 100)
-    max_radius:int = kwargs.get('max_radius', 200)
-    limit:int = kwargs.get('limit', 1)
-    step:int = kwargs.get('step', 5)
-    hough_settings:tuple = kwargs.get('hough_settings', (cv2.HOUGH_GRADIENT, 2, 100))
+    min_radius: int = kwargs.get('min_radius', 100)
+    max_radius: int = kwargs.get('max_radius', 200)
+    limit: int = kwargs.get('limit', 1)
+    step: int = kwargs.get('step', 5)
+    hough_settings: tuple = kwargs.get('hough_settings', (cv2.HOUGH_GRADIENT, 2, 100))
 
     circles = []
-    for moving_max in range(max_radius, min_radius-1, -step):
+    for moving_max in range(max_radius, min_radius - 1, -step):
         moving_min = max([moving_max - step + 1, min_radius])
         moving_circles = houghCircles_format(
             cv2.HoughCircles(edges, *hough_settings, minRadius=moving_min, maxRadius=moving_max))
 
-       # print(f"{moving_max}:{moving_min} -> {len(moving_circles)} found")
+        # print(f"{moving_max}:{moving_min} -> {len(moving_circles)} found")
 
         # add the circles found to the circles array
         if len(moving_circles) == 0:
@@ -55,12 +52,15 @@ def find_circles(frame):
 
     return circles, mask
 
+
 def max_circle(circles):
     return max(circles, key=lambda circle: circle[2])
 
+
 def draw_circle(frame, circle, biggest=False):
-    cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 0, 255) if biggest else (0, 255, 0), 2) # outer
-    cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3) # inner
+    cv2.circle(frame, (circle[0], circle[1]), circle[2], (0, 0, 255) if biggest else (0, 255, 0), 2)  # outer
+    cv2.circle(frame, (circle[0], circle[1]), 2, (0, 0, 255), 3)  # inner
+
 
 def draw_circles(frame, circles):
     if len(circles) == 0: return
@@ -70,4 +70,3 @@ def draw_circles(frame, circles):
             continue
         draw_circle(frame, circle)
     draw_circle(frame, biggest, True)
-
