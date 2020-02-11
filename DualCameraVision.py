@@ -29,6 +29,8 @@ PORT_RIGHT = 1
 cam_left = Camera(PORT_LEFT, exposure=-6)
 cam_right = Camera(PORT_RIGHT, exposure=-6)
 
+print('hello meital')
+
 while True:
     frame_left, frame_right = cam_left.read(), cam_right.read()
     do_vision(frame_left, frame_right)
