@@ -1,7 +1,6 @@
 import consts
 import math
 import numpy as np
-
 clamp = lambda x: 1 if x > 1 else -1 if x < -1 else x
 
 pi = math.pi
@@ -11,11 +10,12 @@ angleAbs = lambda x: (x + pi) % (pi*2)
 def getHotizontalAngle(X: int) -> float:
     return math.radians((1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2)
 
-def locateCell(circle: np.array) -> tuple:
+def locateCell(circle) -> tuple:
     """
     Calculates relative position btwn cell and robot from position and size in video
     """
     X, Y, radius = circle
+    print(circle[0])
     # calculate distance from camera to object
     l = (consts.LIFECAM_FOCAL_LENGTH * consts.CELL_RADIUS) / radius
     # calculate planar distance from robot to object

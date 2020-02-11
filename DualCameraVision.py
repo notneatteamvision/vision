@@ -14,6 +14,14 @@ def do_vision(frame_left, frame_right):
         if suc:
             text = f"{point[0] * 100:.1f} cm  {math.degrees(point[1]):.1f} deg"
             cv2.putText(frame_left, text, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    elif len(circles_right)>len(circles_left):
+        d, a = visionMath.locateCell(circles_right)
+        text = f"{d[0] * 100:.1f} cm  {math.degrees(a):.1f} deg"
+        cv2.putText(frame_right, text, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    else:
+        d, a = visionMath.locateCell(circles_left)
+        text = f"{d[0] * 100:.1f} cm  {math.degrees(a):.1f} deg"
+        cv2.putText(frame_left, text, (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
     Cutils.draw_circles(frame_left, circles_left)
     Cutils.draw_circles(frame_right, circles_right)
 
@@ -28,8 +36,6 @@ PORT_RIGHT = 1
 
 cam_left = Camera(PORT_LEFT, exposure=-6)
 cam_right = Camera(PORT_RIGHT, exposure=-6)
-
-print('hello meital')
 
 while True:
     frame_left, frame_right = cam_left.read(), cam_right.read()
