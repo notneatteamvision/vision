@@ -10,7 +10,7 @@ houghCircles_format = lambda c: list(map(list, np.uint16(np.around(c))[0])) if h
 
 def houghCircles_fix(edges, **kwargs):
     # get kwargs
-    min_radius: int = kwargs.get('min_radius', 100)
+    min_radius: int = kwargs.get('min_radius', 70)
     max_radius: int = kwargs.get('max_radius', 200)
     limit: int = kwargs.get('limit', 1)
     step: int = kwargs.get('step', 5)

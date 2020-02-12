@@ -15,12 +15,15 @@ def locateCell(circle) -> tuple:
     Calculates relative position btwn cell and robot from position and size in video
     """
     X, Y, radius = circle
-    print(circle[0])
+    print(circle[2])
     # calculate distance from camera to object
     l = (consts.LIFECAM_FOCAL_LENGTH * consts.CELL_RADIUS) / radius
     # calculate planar distance from robot to object
     try:
-        d = math.sqrt(l ** 2 - consts.CAMERA_HEIGHT ** 2)
+        if l ** 2 > consts.CAMERA_HEIGHT ** 2:
+            d = math.sqrt(l **  2 - consts.CAMERA_HEIGHT ** 2)
+        else:
+            d = 0.01 #ball is too close too camera
     except Exception as e:
         print(((X, Y, radius), l))
         raise e
