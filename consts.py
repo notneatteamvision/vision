@@ -11,7 +11,7 @@ LIFECAM_FOV_VERTICAL = 34.3
 
 CAMERA_HEIGHT = 0.65  # 0.6 # (unit: m) TODO: change the value according to the robot sketch
 CAMERA_DISTANCE = 0.37
-PORT = 1
+PORT = 0
 
 CELL_RADIUS = 0.087
 CELL_COLOR_RANGE_LOWER = np.array([19, 70, 20])

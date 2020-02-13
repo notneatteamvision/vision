@@ -1,3 +1,14 @@
-import CircleUtilities
+import cv2
 
-CircleUtilities.houghCircles_fix(0, min_radius=180, max_radius=200)
+cap = cv2.VideoCapture(0)
+print(cap.isOpened())
+
+while True:
+    ret, frame = cap.read()
+
+    assert ret # if failed then something went wrong with the video capture
+
+    cv2.imshow("display", frame)
+    if cv2.waitKey(1) == 27:
+        break
+cv2.destroyAllWindows()
