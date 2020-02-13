@@ -1,5 +1,5 @@
 import cv2
-import imutils, math
+import imutils
 import consts
 import numpy as np
 
@@ -49,6 +49,7 @@ class Camera:
                     text = 'Target not found'
                 else:
                     distance = self.focal_length * (ACTUAL_TARGET_AREA / cv2.contourArea(target)) ** 0.5
+                    # TODO: FIX THIS AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                     self.draw_contours(frame, target)
                     self.draw_center(frame, target)
                     cx, cy = self.get_center(target)
