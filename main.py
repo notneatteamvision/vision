@@ -3,10 +3,7 @@ from imutils import grab_contours
 import consts
 import numpy as np
 from math import sqrt
-<<<<<<< HEAD
 
-=======
->>>>>>> 0b31df3c1e4fa3dc2430588d8e7a38a2f0031902
 LOWER_GREEN = np.array([20, 150, 25])
 UPPER_GREEN = np.array([90, 255, 110])
 
@@ -53,11 +50,8 @@ class Camera:
                     text = 'Target not found'
                 else:
                     distance = self.focal_length * sqrt(ACTUAL_TARGET_AREA / cv2.contourArea(target))
-<<<<<<< HEAD
                     # TODO: FIX THIS AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-=======
-                    # TODO: FIX THIS ^^ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
->>>>>>> 0b31df3c1e4fa3dc2430588d8e7a38a2f0031902
+
                     self.draw_contours(frame, target)
                     self.draw_center(frame, target)
                     cx, cy = self.get_center(target)
