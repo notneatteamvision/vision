@@ -10,11 +10,11 @@ houghCircles_format = lambda c: list(map(list, np.uint16(np.around(c))[0])) if h
 
 def houghCircles_fix(edges, **kwargs):
     # get kwargs
-    min_radius: int = kwargs.get('min_radius', 70)
-    max_radius: int = kwargs.get('max_radius', 200)
-    limit: int = kwargs.get('limit', 1)
-    step: int = kwargs.get('step', 5)
-    hough_settings: tuple = kwargs.get('hough_settings', (cv2.HOUGH_GRADIENT, 2, 100))
+    min_radius:int = kwargs.get('min_radius', 70)
+    max_radius:int = kwargs.get('max_radius', 200)
+    limit:int = kwargs.get('limit', 1)
+    step:int = kwargs.get('step', 5)
+    hough_settings:tuple = kwargs.get('hough_settings', (cv2.HOUGH_GRADIENT, 2, 100))
 
     circles = []
     for moving_max in range(max_radius, min_radius - 1, -step):
@@ -38,7 +38,7 @@ def houghCircles_fix(edges, **kwargs):
     return circles
 
 
-def find_circles(frame):
+def find_circles(frame, limit=1):
     blurred = cv2.GaussianBlur(frame, (7, 7), 0)
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
@@ -48,7 +48,7 @@ def find_circles(frame):
     edges = cv2.Canny(morph, 10, 200, 3)
     bedges = cv2.GaussianBlur(edges, (7, 7), 0)
 
-    circles = houghCircles_fix(bedges, min_radius=30, max_radius=200, step=30)
+    circles = houghCircles_fix(bedges, min_radius=30, max_radius=200, step=30, limit=limit)
 
     return circles, mask
 
