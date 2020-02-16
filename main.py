@@ -1,8 +1,8 @@
 import cv2
-import imutils
+from imutils import grab_contours
 import consts
 import numpy as np
-
+from math import sqrt
 LOWER_GREEN = np.array([20, 150, 25])
 UPPER_GREEN = np.array([90, 255, 110])
 
@@ -48,8 +48,8 @@ class Camera:
                     # in case we got some noise - limit the area to be greater than 100
                     text = 'Target not found'
                 else:
-                    distance = self.focal_length * (ACTUAL_TARGET_AREA / cv2.contourArea(target)) ** 0.5
-                    # TODO: FIX THIS AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                    distance = self.focal_length * sqrt(ACTUAL_TARGET_AREA / cv2.contourArea(target))
+                    # TODO: FIX THIS ^^ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
                     self.draw_contours(frame, target)
                     self.draw_center(frame, target)
                     cx, cy = self.get_center(target)
@@ -78,7 +78,7 @@ class Camera:
     def find_contours(self, filtered):
         edged = cv2.Canny(filtered, 35, 125)
         contours = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        return edged, imutils.grab_contours(contours)
+        return edged, grab_contours(contours)
 
     def draw_contours(self, frame, target):
         hull = cv2.convexHull(target)
