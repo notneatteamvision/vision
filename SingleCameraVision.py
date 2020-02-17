@@ -15,7 +15,7 @@ def do_vision(frame):
     global cellCounter
 
     circles, mask = Cutils.find_circles(frame)
-    if len(circles) > 0:
+    if len(circles) == 1:
         cellCounter = 0
         result[0], result[1] = visionMath.locateCell(circles[0])
         if result[0] == -999 and result[1] == -999:
