@@ -3,11 +3,10 @@
 import cv2
 from imutils import grab_contours
 import numpy as np
-from math import sqrt
 
 # imports from the code
 
-import consts
+from pi import consts
 
 # only green (there are green leds on the camera)
 LOWER_GREEN = np.array([20, 150, 25])

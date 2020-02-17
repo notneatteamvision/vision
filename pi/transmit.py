@@ -1,6 +1,6 @@
 import threading
 
-from nt_io import NetworkTableIO
+from pi.nt_io import NetworkTableIO
 
 
 def connection_listener(connected, info):
