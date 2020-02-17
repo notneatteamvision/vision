@@ -14,7 +14,7 @@ pi = math.pi
 
 angleAbs = lambda x: (x + pi) % (pi * 2)
 
-
+#finds angle cell to robot with 1 camera
 def getHotizontalAngle(X: int) -> float:
     return math.radians((1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2)
 
@@ -24,10 +24,11 @@ def locateCell(circle) -> tuple:
     """
     Calculates relative position btwn cell and robot from position and size in video
     """
-    X, Y, radius = circle
+    X, Y, radius = circle # center point + radius
     # print(circle[2])
     # calculate distance from camera to object
     l = (consts.LIFECAM_FOCAL_LENGTH * consts.CELL_RADIUS) / radius
+
     # calculate planar distance from robot to object
     try:
         if l ** 2 > consts.CAMERA_HEIGHT ** 2:
@@ -43,6 +44,7 @@ def locateCell(circle) -> tuple:
 
 #returns distance and angle from circles with 2 cameras
 #not used on guido
+#full calculation is on the vision paper with all the details/on drive in "general"
 def triangulatePoint(Xl: int, Xr: int) -> tuple:
     if Xl <= Xr:
         return False, None
