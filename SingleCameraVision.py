@@ -1,4 +1,9 @@
-import cv2, math
+# imports not from the code
+
+import cv2
+import math
+
+# imports from the code
 
 import transmit
 import consts
@@ -11,8 +16,9 @@ cellCounter = 0  # number of frames in a row with no circles
 result = [-999, -999]  # it's impossible to get these values, i just failproofed this part so deal with these numbers
 
 
+# main func for finding circles
 def do_vision(frame):
-    global cellCounter
+    global cellCounter #
 
     circles, mask = Cutils.find_circles(frame)
     if len(circles) == 1:
@@ -50,7 +56,8 @@ while True:
         result[1] = None
     frame = cap.read()
     do_vision(frame)
-    # add sending to guy the result from do_vision something like : return result
+
+    # stops the program from runing
     key = cv2.waitKey(1 if running else 0)
     if key & 0xff == ord('q'):
         break

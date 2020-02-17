@@ -1,6 +1,10 @@
-import cv2
-import consts
+#imports not from the code
 
+import cv2
+
+#imports from the code
+
+import consts
 
 class Camera:
     def __init__(self, port: int, **kwargs):

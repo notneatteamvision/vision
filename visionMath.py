@@ -1,6 +1,12 @@
-import consts
+#imports not from the code
+
 import math
 import numpy as np
+
+#imports not from the code
+
+import consts
+
 
 clamp = lambda x: 1 if x > 1 else -1 if x < -1 else x
 
@@ -12,7 +18,8 @@ angleAbs = lambda x: (x + pi) % (pi * 2)
 def getHotizontalAngle(X: int) -> float:
     return math.radians((1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2)
 
-
+#returns distance and angle from 1 circle with 1 camera
+#used on guido
 def locateCell(circle) -> tuple:
     """
     Calculates relative position btwn cell and robot from position and size in video
@@ -34,7 +41,8 @@ def locateCell(circle) -> tuple:
     angle = getHotizontalAngle(X)
     return (d, angle)
 
-
+#returns distance and angle from circles with 2 cameras
+#not used on guido
 def triangulatePoint(Xl: int, Xr: int) -> tuple:
     if Xl <= Xr:
         return False, None

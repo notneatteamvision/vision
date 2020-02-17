@@ -1,9 +1,13 @@
+#imports not from the code
+
 import cv2
 from imutils import grab_contours
-import consts
 import numpy as np
 from math import sqrt
 
+#imports from the code
+
+import consts
 LOWER_GREEN = np.array([20, 150, 25])
 UPPER_GREEN = np.array([90, 255, 110])
 
@@ -11,9 +15,6 @@ ACTUAL_TARGET_AREA = ((50.8 + 101.6) * 43.3578) / 2
 
 TARGET_NOT_FOUND = 'Target not found'
 TARGET_FOUND = 'Distance to target {} cm'
-
-ROBOT_POINT = (320, 480)
-MIDDLE_LINE = [(320, 480), (320, 0)]
 
 
 class Camera:
@@ -35,10 +36,7 @@ class Camera:
             filtered = self.filter(frame)
             filled = self.fill(filtered)
             edged, contours = self.find_contours(filled)
-            # --------------------------------------------->
-            cv2.circle(frame, ROBOT_POINT, 8, (0, 0, 255), -1)
-            cv2.line(frame, MIDDLE_LINE[0], MIDDLE_LINE[1], (0, 0, 255), 3)
-            # <---------------------------------------------
+
 
             if not contours:  # if contours aren't empty/ none
                 text = TARGET_NOT_FOUND

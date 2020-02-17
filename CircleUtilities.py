@@ -1,13 +1,17 @@
+#imports not from the code
+
 import cv2
 import numpy as np
 import math
+
+#imports from the code
 
 import consts
 
 houghCircles_notempty = lambda c: ((isinstance(c, np.ndarray) and len(c)) or c != None)
 houghCircles_format = lambda c: list(map(list, np.uint16(np.around(c))[0])) if houghCircles_notempty(c) else []
 
-
+#Recognizes circles
 def houghCircles_fix(edges, **kwargs):
     # get kwargs
     min_radius:int = kwargs.get('min_radius', 70)
