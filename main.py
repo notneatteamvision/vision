@@ -5,6 +5,7 @@ from imutils import grab_contours
 import numpy as np
 from math import sqrt
 
+<<<<<<< Updated upstream
 # imports from the code
 
 import consts
@@ -12,6 +13,10 @@ import consts
 # only green (there are green leds on the camera)
 LOWER_GREEN = np.array([20, 150, 25])
 UPPER_GREEN = np.array([90, 255, 110])
+=======
+LOWER_GREEN = np.array([10, 200, 30])
+UPPER_GREEN = np.array([100, 255, 160])
+>>>>>>> Stashed changes
 
 ACTUAL_TARGET_AREA = ((50.8 + 101.6) * 43.3578) / 2
 
@@ -34,10 +39,18 @@ class Camera:
     def camera_feed(self):
         while True:
             ret, frame = self.cap.read()
-
             filtered = self.filter(frame)
+<<<<<<< Updated upstream
             filled = self.fill(filtered)
             edged, contours = self.find_contours(filled)
+=======
+            cv2.imshow("blah",filtered)
+            edged, contours = self.find_contours(filtered)
+            # --------------------------------------------->
+            cv2.circle(frame, ROBOT_POINT, 8, (0, 0, 255), -1)
+            cv2.line(frame, MIDDLE_LINE[0], MIDDLE_LINE[1], (0, 0, 255), 3)
+            # <---------------------------------------------
+>>>>>>> Stashed changes
 
             if not contours:  # if contours aren't empty/ none
                 text = TARGET_NOT_FOUND
@@ -48,8 +61,13 @@ class Camera:
                     # in case we got some noise - limit the area to be greater than 100
                     text = 'Target not found'
                 else:
+<<<<<<< Updated upstream
                     #distance = self.focal_length * sqrt(ACTUAL_TARGET_AREA / cv2.contourArea(target))
 
+=======
+                    distance = self.focal_length * sqrt(ACTUAL_TARGET_AREA / cv2.contourArea(target))
+                    # TODO: FIX THIS AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+>>>>>>> Stashed changes
                     self.draw_contours(frame, target)
                     self.draw_center(frame, target)
                     cx, cy = self.get_center(target)
