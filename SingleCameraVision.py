@@ -63,7 +63,7 @@ while True:
     frame = cap.read()
     do_vision(frame)
 
-    # stops the program from runing
+    # stop when q is pressed
     key = cv2.waitKey(1 if running else 0)
     if key & 0xff == ord('q'):
         break
