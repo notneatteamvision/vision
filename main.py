@@ -1,18 +1,22 @@
+# imports not from the code
+
 import cv2
-import imutils, math
-import consts
+from imutils import grab_contours
 import numpy as np
+from math import sqrt
 
-LOWER_GREEN = np.array([60, 30, 30])
-UPPER_GREEN = np.array([80, 255, 255])
+# imports from the code
 
-ACTUAL_TARGET_AREA = 33.6 * 10.1
+import consts
+
+# only green (there are green leds on the camera)
+LOWER_GREEN = np.array([20, 150, 25])
+UPPER_GREEN = np.array([90, 255, 110])
+
+ACTUAL_TARGET_AREA = ((50.8 + 101.6) * 43.3578) / 2
 
 TARGET_NOT_FOUND = 'Target not found'
-TARGET_FOUND = 'Distance to target {} cm'
-
-ROBOT_POINT = (320, 480)
-MIDDLE_LINE = [(320, 480), (320, 0)]
+TARGET_FOUND = 'Angle to target {} deg'
 
 
 class Camera:
@@ -32,11 +36,8 @@ class Camera:
             ret, frame = self.cap.read()
 
             filtered = self.filter(frame)
-            edged, contours = self.find_contours(frame)
-            # --------------------------------------------->
-            cv2.circle(frame, ROBOT_POINT, 8, (0, 0, 255), -1)
-            cv2.line(frame, MIDDLE_LINE[0], MIDDLE_LINE[1], (0, 0, 255), 3)
-            # <---------------------------------------------
+            filled = self.fill(filtered)
+            edged, contours = self.find_contours(filled)
 
             if not contours:  # if contours aren't empty/ none
                 text = TARGET_NOT_FOUND
@@ -47,26 +48,20 @@ class Camera:
                     # in case we got some noise - limit the area to be greater than 100
                     text = 'Target not found'
                 else:
-                    distance = self.focal_length * (ACTUAL_TARGET_AREA / cv2.contourArea(target)) ** 0.5
-                    displacement = self.get_displacement(distance)
+                    #distance = self.focal_length * sqrt(ACTUAL_TARGET_AREA / cv2.contourArea(target))
+
                     self.draw_contours(frame, target)
                     self.draw_center(frame, target)
-
                     cx, cy = self.get_center(target)
                     angle = self.get_angle(cx)
-                    cv2.line(frame, (320, cy), (cx, cy), (0, 255, 0), 3)
-                    cv2.line(frame, ROBOT_POINT, (cx, cy), (255, 0, 0), 3)
-                    line1 = abs(320 - cx)
-                    line2 = abs(cy - ROBOT_POINT[1])
-                    angle = math.atan(line1 / line2) * 180 / math.pi
                     print(angle)
+                    #print(distance)
 
-                    distance = int(distance * 100) / 100
-                    text = TARGET_FOUND.format(distance)  # change to displacement
+                    #distance = int(distance * 100) / 100
+                    text = TARGET_FOUND.format(angle)
 
             # show images and put text
             self.display_result(frame, filtered, edged, text)
-
             if cv2.waitKey(1) & 0xff == ord('q'):
                 break
 
@@ -74,23 +69,41 @@ class Camera:
 
     def filter(self, frame):
         blurred = cv2.GaussianBlur(frame, (5, 5), 0)
-        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-        return cv2.inRange(hsv, LOWER_GREEN, UPPER_GREEN)
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)# BGR->HSV
+        filter = cv2.inRange(hsv, LOWER_GREEN, UPPER_GREEN)# only green
+        morph = cv2.morphologyEx(filter, cv2.MORPH_DILATE, np.ones((2, 2), np.uint8))#Morphology
+        morph = cv2.morphologyEx(morph, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))#Morphology
+        return morph
 
-    def find_contours(self, filtered):
+    def find_contours(self, filtered): #finds contours
         edged = cv2.Canny(filtered, 35, 125)
         contours = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        return edged, imutils.grab_contours(contours)
+        return edged, grab_contours(contours)
 
-    def draw_contours(self, frame, target):
+    def draw_contours(self, frame, target): # draws the contours and creates convex hull
         hull = cv2.convexHull(target)
         cv2.drawContours(frame, [hull], 0, (255, 0, 0), 1)
 
-    def draw_center(self, frame, target):
+    def draw_center(self, frame, target): # draws the center of a contour
         m = cv2.moments(target)
         cx = np.int(m['m10'] / m['m00'])
         cy = np.int(m['m01'] / m['m00'])
         cv2.circle(frame, (cx, cy), 5, (255, 255, 255), -1)
+
+    def fill(self, frame):  #fills the contours
+        # fills the empty image
+        th, threshed = cv2.threshold(frame, 220, 255, cv2.THRESH_BINARY_INV)
+        threshed_floodfill = threshed.copy()
+        # Notice the size needs to be 2 pixels than the image.
+        h, w = threshed.shape[:2]
+        mask = np.zeros((h + 2, w + 2), np.uint8)
+        cv2.floodFill(threshed_floodfill, mask, (0, 0), 255)
+        floodfill_inverted = cv2.bitwise_not(threshed_floodfill)
+        # result = threshed | floodfill_inverted
+        cv2.imshow("Thresholded Image", threshed)
+        cv2.imshow("Floodfilled Image", threshed_floodfill)
+        cv2.imshow("Inverted Floodfilled Image", floodfill_inverted)
+        return floodfill_inverted
 
     def display_result(self, frame, filtered, edged, text):
         cv2.putText(frame, text, (5, 470), cv2.FONT_HERSHEY_SIMPLEX, 1, 255)
@@ -98,30 +111,23 @@ class Camera:
         cv2.imshow('Filter', filtered)
         cv2.imshow('Edger', edged)
 
-    def die(self):
+    def die(self): #die
         cv2.destroyAllWindows()
         self.cap.release()
 
-    def get_center(self, target):
+    def get_center(self, target): #center of contour
         m = cv2.moments(target)
         cx = np.int(m['m10'] / m['m00'])
         cy = np.int(m['m01'] / m['m00'])
         return cx, cy
-    
-    def get_displacement(self, distance):
-        # TODO FIX THE CONST- UNITS -------------------------------------------------------------------------------ASAP
-        # finds the distance vector from the robot to the target
-        height_diff = consts.CAMERA_HEIGHT - consts.TARGET_HEIGHT_CENTER
-        displaced_distance = math.sqrt(distance ** 2 - height_diff ** 2)
-        return displaced_distance
 
-    def get_angle(self, cx):
+    def get_angle(self, cx): #finds angle to contour
         angle = (1 - 2 * cx / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2
         return angle
 
 
 if __name__ == '__main__':
-    cam = Camera(1,  # camera port
+    cam = Camera(consts.PORT,  # camera port
                  consts.LIFECAM_FOV_HORIZONTAL,
                  consts.LIFECAM_FOCAL_LENGTH)
     try:

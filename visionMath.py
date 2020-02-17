@@ -1,26 +1,40 @@
-import consts
+#imports not from the code
+
 import math
 import numpy as np
+
+#imports not from the code
+
+import consts
+
 
 clamp = lambda x: 1 if x > 1 else -1 if x < -1 else x
 
 pi = math.pi
 
-angleAbs = lambda x: (x + pi) % (pi*2) - pi
+angleAbs = lambda x: (x + pi) % (pi * 2)
 
+#finds angle cell to robot with 1 camera
 def getHotizontalAngle(X: int) -> float:
     return math.radians((1 - 2 * X / consts.VIDEO_WIDTH) * consts.LIFECAM_FOV_HORIZONTAL / 2)
 
-def locateCell(circle: np.array) -> tuple:
+#returns distance and angle from 1 circle with 1 camera
+#used on guido
+def locateCell(circle) -> tuple:
     """
     Calculates relative position btwn cell and robot from position and size in video
     """
-    X, Y, radius = circle
+    X, Y, radius = circle # center point + radius
+    # print(circle[2])
     # calculate distance from camera to object
     l = (consts.LIFECAM_FOCAL_LENGTH * consts.CELL_RADIUS) / radius
+
     # calculate planar distance from robot to object
     try:
-        d = math.sqrt(l ** 2 - consts.CAMERA_HEIGHT ** 2)
+        if l ** 2 > consts.CAMERA_HEIGHT ** 2:
+            d = math.sqrt(l ** 2 - consts.CAMERA_HEIGHT ** 2)
+        else:
+            d = 0.01  # ball is too close too camera
     except Exception as e:
         print(((X, Y, radius), l))
         raise e
@@ -28,7 +42,9 @@ def locateCell(circle: np.array) -> tuple:
     angle = getHotizontalAngle(X)
     return (d, angle)
 
-
+#returns distance and angle from circles with 2 cameras
+#not used on guido
+#full calculation is on the vision paper with all the details/on drive in "general"
 def triangulatePoint(Xl: int, Xr: int) -> tuple:
     if Xl <= Xr:
         return False, None
@@ -36,9 +52,9 @@ def triangulatePoint(Xl: int, Xr: int) -> tuple:
         l = consts.CAMERA_DISTANCE
         Bl, Br = getHotizontalAngle(Xl), getHotizontalAngle(Xr)
         Dl = l * math.cos(Br) / math.sin(Bl - Br)
-        x = math.sqrt((l/2)**2 + Dl**2 - l*Dl*math.cos(pi/2-Bl))
-        a = angleAbs(math.asin(clamp(math.cos(Bl)*Dl/x))-pi/2)
+        x = math.sqrt((l / 2) ** 2 + Dl ** 2 - l * Dl * math.cos(pi / 2 - Bl))
+        a = angleAbs(math.asin(clamp(math.cos(Bl) * Dl / x)) - pi / 2)
         return True, (x, a)
     except Exception as e:
         print((Xl, Xr))
-        raise e # TODO REMOVE THIS AAAAAAAA
+        raise e  # TODO REMOVE THIS AAAAAAAA
