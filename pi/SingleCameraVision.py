@@ -11,8 +11,8 @@ from pi.Camera import Camera
 
 running = True  # important for stoping the runing of the code
 cellCounter = 0  # number of frames in a row with no circles , if >2 returning no circles
-result = [-999.0,
-          -999.0]  # it's impossible to get these values, i just failproofed this part so deal with these numbers
+result = [-999,
+          -999]  # it's impossible to get these values, i just failproofed this part so deal with these numbers
 
 
 # main func for finding circles
