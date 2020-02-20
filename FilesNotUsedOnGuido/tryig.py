@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-import visionMath
-import consts
+import pi.visionMath as visionMath
+import pi.consts as consts
 
 yellow = [np.array([19, 70, 20]), np.array([40, 255, 255])]
 

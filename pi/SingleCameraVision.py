@@ -17,7 +17,7 @@ result = [-999,
 
 # main func for finding circles
 def do_vision(frame):
-    global cellCounter  # counts how much frames were without circles in a row' if >2 returns no circles
+    global cellCounter  # counter if 0 circles were found cellCounter ++, if cellCounter > 2 : -> no circles
 
     circles, mask = Cutils.find_circles(frame)
 
@@ -25,18 +25,18 @@ def do_vision(frame):
         cellCounter = 0  # init cellCounter
         result[0], result[1] = visionMath.locate_cell(circles[0])  # result[0] = d , result[1] = a
         if result[0] == -999 and result[1] == -999:  # if there are no circles at all
-            text = "There are no circles in sight for now, oh no! This is not work! Call someone! Help me!"  # delete this later
             transmit.send(result)  # sends result
-        elif result[0] < 0.45:
-            text = "The Ball is too close to the camera!"
+
+        elif result[0] < 0.45:  # if the ball is too close - ignore
+            # TODO: CHECK IF 0.45 IS CORRECT
             result[0] = -999
             result[1] = -999
             transmit.send(result)  # sends result
         else:
-            text = f"{result[0] * 100:.1f} cm  {math.degrees(result[1]):.1f} deg"
             result[0] = int(result[0] * 10000) / 10000
             result[1] = int(result[1] * 10000) / 10000
-            transmit.send(result)  # sends result
+            result[1] = math.degrees(result[1])  # change to deg
+            transmit.send(result)  # transmit result
 
     else:
         cellCounter += 1
